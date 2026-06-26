@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="description"
+    content="Noor-ul-Ain Shahzad — Full-Stack Developer & Technical Communicator. SE student at COMSATS University Abbottabad building secure, high-performance web applications with AI-assisted workflows." />
+  <title>Noor-ul-Ain Shahzad — Full-Stack Developer</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+
+  <!-- CRT MONITOR OVERLAYS -->
+  <div class="crt-bezel"></div>
+  <div class="crt-scanlines"></div>
+  <div class="crt-flicker"></div>
+
+  <!-- CUSTOM CURSOR -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-terminal">
+      <div class="term-line">NAS_SYSINIT // BOOT_SEQUENCE ACTIVE</div>
+      <div class="term-line">LOADING CORE MODULES...</div>
+      <div class="loader-bar">
+        <div class="loader-fill" id="loader-fill"></div>
+      </div>
+      <div class="term-line status-text" id="loader-status">CONNECTING TO DATABASE...</div>
+    </div>
+  </div>
+
+  <!-- SIDE DECORATIONS (GALEKTO VIBE) -->
+  <div class="side-indicator left-indicator">_SYS.LOC: Abbottabad // GDG.HOST</div>
+  <div class="side-indicator right-indicator">NAS_CONSOLE_v1.2.6 // STATUS: ONLINE</div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#hero" class="nav-logo">NAS<span>_</span>PORTFOLIO</a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Arsenal</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <div class="nav-social">
+        <a href="https://github.com/your-username" target="_blank" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+          </svg>
+        </a>
+        <a href="https://linkedin.com/in/your-username" target="_blank" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+          </svg>
+        </a>
+        <a href="mailto:noorulainshahzad25@gmail.com" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+          </svg>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="crt-content-wrapper">
+    <!-- ══ HERO ══ -->
+    <section id="hero">
+      <div class="globe-container">
+        <canvas id="cobe-globe" class="cobe-canvas"></canvas>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-eyebrow">FULL STACK DEVELOPER &amp; TECHNICAL COMMUNICATION</div>
+        <div class="hero-headline">
+          <h1 id="hero-h1">
+            INTEGRATING FUTURE INTO WEB
+          </h1>
+        </div>
+        <p class="hero-sub">Software Engineering student at COMSATS University Abbottabad, blending AI-driven workflows
+          with community leadership to engineer high-performance applications.</p>
+        <div class="hero-cta">
+          <a href="#projects" class="btn btn-primary" id="cta-work"><span>[ View Featured Work ]</span></a>
+          <a href="#contact" class="btn btn-secondary" id="cta-contact"><span>[ Let's Build Something ]</span></a>
+        </div>
+      </div>
+      <div class="hero-scroll">
+        <div class="scroll-track">
+          <div class="scroll-fill"></div>
+        </div>
+        Scroll
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══ ABOUT ══ -->
+    <section id="about">
+      <div class="about-left">
+        <div class="section-eyebrow reveal">02 — Executive Narrative</div>
+        <h2 class="reveal">Developer.<br /><em class="gold-text italic">Communicator.</em><br />Leader.</h2>
+        <div class="about-text-reveal" id="about-text">
+          <p id="word-para">I am a software engineer who operates dynamically both behind the console and in front of an
+            audience. My core engineering methodology utilizes structured AI-driven workflows to eliminate routine
+            boilerplate constraints, allowing me to focus my bandwidth on system architecture, database normalization,
+            and rigorous security modeling. This accelerated velocity provides me with the operational room to lead. As
+            a community executive and technical host, I turn complex backend logic into accessible product narratives,
+            bringing an outspoken, articulate, and results-driven presence to every project I deploy.</p>
+        </div>
+        <div class="about-meta reveal">
+          <div class="meta-item">
+            <div class="meta-num">4+</div>
+            <div class="meta-label">Production Projects</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-num">GDG</div>
+            <div class="meta-label">Marketing Lead</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-num">2+</div>
+            <div class="meta-label">Years Engineering</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-num">5★</div>
+            <div class="meta-label">Security Focus</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-right">
+        <div class="profile-flip-card reveal right">
+          <div class="profile-card-inner">
+            <div class="profile-card-front">
+              <img src="assets/profile-photo.jpeg" alt="Noor-ul-Ain Shahzad — Full-Stack Developer" />
+              <div class="profile-overlay"></div>
+              <div class="profile-badge">
+                <strong>Noor-ul-Ain Shahzad</strong>
+                SE Student · COMSATS University Abbottabad · GDG Marketing Lead
+              </div>
+            </div>
+            <div class="profile-card-back">
+              <div class="profile-back-title">Core Systems Specs</div>
+              <div class="profile-specs">
+                <div class="spec-line">
+                  <span class="spec-label">ENV:</span>
+                  <span class="spec-val">NODE / EXPRESS</span>
+                </div>
+                <div class="spec-line">
+                  <span class="spec-label">STORE:</span>
+                  <span class="spec-val">SQLITE / WAL</span>
+                </div>
+                <div class="spec-line">
+                  <span class="spec-label">COMMUNITY:</span>
+                  <span class="spec-val">GDG MARKETING</span>
+                </div>
+                <div class="spec-line">
+                  <span class="spec-label">SECURITY:</span>
+                  <span class="spec-val">DEFENSIVE SEC</span>
+                </div>
+                <div class="spec-line">
+                  <span class="spec-label">ENGINEERING:</span>
+                  <span class="spec-val" style="color: var(--green);">OPERATIONAL</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══ SKILLS ══ -->
+    <section id="skills">
+      <div class="skills-intro">
+        <div class="section-eyebrow reveal">03 — Technical Arsenal</div>
+        <h2 class="reveal">The <em class="gold-text italic">Stack</em></h2>
+        <p class="reveal">Four quadrants of the engineering toolkit — from low-level systems to production-grade
+          security.</p>
+      </div>
+      <div class="skills-grid reveal">
+        <div class="skill-card">
+          <div class="skill-num">01</div>
+          <h3>Full-Stack Software Engineering</h3>
+          <div class="skill-tags">
+            <span class="s-tag">Node.js</span><span class="s-tag">Express.js</span><span class="s-tag">HTML5</span><span
+              class="s-tag">Vanilla CSS3</span><span class="s-tag">JavaScript ES6+</span><span class="s-tag">Fetch
+              API</span><span class="s-tag">DOM APIs</span><span class="s-tag">Java OOP</span><span class="s-tag">Java
+              GUI</span><span class="s-tag">C++</span><span class="s-tag">RESTful APIs</span><span
+              class="s-tag">Middleware</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-num">02</div>
+          <h3>Database Systems &amp; Analytics</h3>
+          <div class="skill-tags">
+            <span class="s-tag">SQLite</span><span class="s-tag">better-sqlite3</span><span class="s-tag">WAL
+              Mode</span><span class="s-tag">MySQL</span><span class="s-tag">Schema Design</span><span class="s-tag">ER
+              Optimization</span><span class="s-tag">DB Normalization</span><span class="s-tag">Relational
+              Integrity</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-num">03</div>
+          <h3>Defensive Cybersecurity</h3>
+          <div class="skill-tags">
+            <span class="s-tag">CSRF Tokens</span><span class="s-tag">XSS Mitigation</span><span
+              class="s-tag">Helmet.js</span><span class="s-tag">Rate Limiting</span><span class="s-tag">PBKDF2
+              Hashing</span><span class="s-tag">Input Sanitization</span><span class="s-tag">Secure Sessions</span><span
+              class="s-tag">CSP Headers</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-num">04</div>
+          <h3>Modern Workflow Optimization</h3>
+          <div class="skill-tags">
+            <span class="s-tag">Prompt Engineering</span><span class="s-tag">AI-Assisted Dev</span><span
+              class="s-tag">Rapid Prototyping</span><span class="s-tag">LLM Refactoring</span><span
+              class="s-tag">Boilerplate Automation</span><span class="s-tag">Agile Sprints</span><span
+              class="s-tag">Code Reviews</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══ PROJECTS ══ -->
+    <section id="projects">
+      <div class="projects-header">
+        <div>
+          <div class="section-eyebrow reveal">04 — Featured Production Showcase</div>
+          <h2 class="reveal">Engineered <em class="gold-text italic">Systems</em></h2>
+        </div>
+        <p class="reveal">Production-deployed platforms built with security and performance at the core.</p>
+      </div>
+
+      <!-- Blackstone Chambers -->
+      <div class="project-featured reveal" id="proj-blackstone">
+        <div class="pf-screenshots">
+          <div class="pf-track" id="bs-track">
+            <div class="pf-slide"><img src="assets/projects/blackstone-hero.png" alt="Blackstone Chambers Homepage"
+                loading="lazy" /></div>
+            <div class="pf-slide"><img src="assets/projects/blackstone-practices.png" alt="Practice Areas"
+                loading="lazy" /></div>
+            <div class="pf-slide"><img src="assets/projects/blackstone-team.png" alt="Legal Team" loading="lazy" />
+            </div>
+            <div class="pf-slide"><img src="assets/projects/blackstone-about.png" alt="About Page" loading="lazy" />
+            </div>
+            <div class="pf-slide"><img src="assets/projects/blackstone-practice-areas.png" alt="Practice Areas Detail"
+                loading="lazy" /></div>
+            <div class="pf-slide"><img src="assets/projects/blackstone-lawyers.png" alt="Lawyers Page" loading="lazy" />
+            </div>
+            <div class="pf-slide"><img src="assets/projects/blackstone-contact.png" alt="Contact Page" loading="lazy" />
+            </div>
+            <div class="pf-slide"><img src="assets/projects/blackstone-clients.png" alt="Clients Page" loading="lazy" />
+            </div>
+            <div class="pf-slide"><img src="assets/projects/blackstone-insights.png" alt="Legal Insights Blog"
+                loading="lazy" /></div>
+            <div class="pf-slide"><img src="assets/projects/blackstone-admin.png" alt="Admin Dashboard"
+                loading="lazy" /></div>
+          </div>
+          <button class="pf-arrow prev" id="bs-prev">&#8249;</button>
+          <button class="pf-arrow next" id="bs-next">&#8250;</button>
+          <div class="pf-controls" id="bs-dots"></div>
+        </div>
+        <div class="pf-info">
+          <div class="pf-meta">
+            <div class="pf-status">Live Production</div>
+            <div class="pf-role">Solo Full-Stack Developer &amp; Architect</div>
+          </div>
+          <h3>Blackstone Chambers — Full-Stack Legal Platform</h3>
+          <p>Engineered and deployed a secure, production-grade web application and custom CMS for Blackstone Chambers,
+            a premier Pakistani law firm. Couples a public-facing digital portal with a password-restricted admin
+            control panel for lead auditing and content publishing.</p>
+          <ul class="pf-bullets">
+            <li><strong>Client Acquisition Funnel:</strong> Interactive entryways capturing case details and triggering
+              automated real-time alerts via Nodemailer SMTP.</li>
+            <li><strong>Custom Editorial CMS:</strong> Full CRUD over firm articles with dynamically generated
+              SEO-optimized URL slugs.</li>
+            <li><strong>High-Performance DB:</strong> SQLite with WAL mode configured via better-sqlite3 for low-latency
+              concurrent read/write operations.</li>
+            <li><strong>Defensive Security Pipeline:</strong> CSRF tokens, XSS filtration, PBKDF2 hashing,
+              rate-limiting, and Helmet.js hardened headers.</li>
+          </ul>
+          <a href="https://blackstone-chambers.onrender.com" target="_blank" class="pf-link" id="blackstone-link">↗ View
+            Live Production</a>
+        </div>
+      </div>
+
+      <!-- Terminal Cards -->
+      <div class="terminal-row">
+        <div class="t-card reveal">
+          <div class="t-head">
+            <div class="t-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+            <span class="t-label">TaskManager.java — JVM Runtime</span>
+          </div>
+          <div class="t-body">
+            <div><span class="tc">// AI-Integrated Task Manager (Java Desktop)</span></div>
+            <div><span class="tc">// Project Lead · Semester Project</span></div>
+            <br />
+            <div><span class="tk">class</span> <span class="tg">TaskManager</span> <span class="tb">{</span></div>
+            <div>&nbsp;&nbsp;<span class="tk">@API</span> &nbsp;<span class="tv">GeminiCloud</span><span class="tc">//
+                AI scheduling</span></div>
+            <div>&nbsp;&nbsp;<span class="tk">@GUI</span> &nbsp;<span class="tv">JavaSwing</span>&nbsp;<span
+                class="tc">// Native desktop</span></div>
+            <div>&nbsp;&nbsp;<span class="tk">@OOP</span> &nbsp;<span class="tv">Polymorphism</span></div>
+            <br />
+            <div>&nbsp;&nbsp;<span class="tg">gemini</span>.<span class="tv">processSchedule</span>()</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;.<span class="tv">optimizeRoutine</span>()</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;.<span class="tv">trackProductivity</span>();</div>
+            <div><span class="tb">}</span></div>
+            <br />
+            <div><span class="tc">// ✓ Compiled &amp; Deployed</span></div>
+          </div>
+        </div>
+        <div class="t-card reveal">
+          <div class="t-head">
+            <div class="t-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+            <span class="t-label">tickets.cpp — C++ Executable</span>
+          </div>
+          <div class="t-body">
+            <div><span class="tc">// CLI Ticket Reservation System (C++)</span></div>
+            <div><span class="tc">// Core Developer · Semester Project</span></div>
+            <br />
+            <div><span class="tk">#include</span> <span class="ts">&lt;fstream&gt;</span><span class="tc">// Data
+                persistence</span></div>
+            <div><span class="tk">#include</span> <span class="ts">&lt;vector&gt;</span>&nbsp;<span class="tc">// Seat
+                management</span></div>
+            <br />
+            <div><span class="tk">int</span> <span class="tg">main</span>() {</div>
+            <div>&nbsp;&nbsp;<span class="tv">loadBookings</span>(<span class="ts">"records.dat"</span>);</div>
+            <div>&nbsp;&nbsp;<span class="tv">processReservation</span>(seatMap);</div>
+            <div>&nbsp;&nbsp;<span class="tv">persistToFile</span>(customerData);</div>
+            <div>&nbsp;&nbsp;<span class="tk">return</span> <span class="tv">EXIT_SUCCESS</span>;</div>
+            <div>}</div>
+            <br />
+            <div><span class="tc">// ✓ Fully Operational</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Roadmap -->
+      <div class="roadmap-strip reveal">
+        <div>
+          <span class="rm-badge">⚡ Under Active Engineering</span>
+          <h3>Enterprise B2B SaaS Platform <span class="gold-text">(MySQL Roadmap)</span></h3>
+          <p>Multi-tenant platform with optimized, highly normalized MySQL schemas, complex relational integrity, and
+            strict transactional logic. Target: end of current academic term.</p>
+        </div>
+        <div class="rm-icon">🗃</div>
+      </div>
+
+      <div id="dynamic-projects-container">
+        <!-- New projects uploaded via Admin Panel will dynamically load here -->
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══ EXPERIENCE ══ -->
+    <section id="experience">
+      <div class="section-eyebrow reveal">05 — Commercial Experience &amp; Leadership</div>
+      <h2 class="reveal">The <em class="gold-text italic">Timeline</em></h2>
+      <div class="exp-grid">
+        <div class="timeline">
+          <div class="t-item reveal">
+            <div class="t-dot"></div>
+            <div class="t-date">Feb 16, 2026 — Mar 17, 2026</div>
+            <div class="t-company">Cloudpacer · Lahore, Pakistan</div>
+            <h3>Tech Intern</h3>
+            <ul class="t-list">
+              <li>Operated inside an active corporate software house executing system testing, codebase upgrades, and
+                optimization across production client web systems.</li>
+              <li>Employed AI-assisted engineering frameworks to prototype system requirements, write boilerplate
+                components, and streamline delivery cadences.</li>
+              <li>Assisted senior engineers in mapping frontend interface hooks into relational backend services and
+                database layers.</li>
+              <li>Participated in agile sprints, code reviews, and documentation routines to guarantee software
+                stability.</li>
+            </ul>
+          </div>
+          <div class="t-item reveal">
+            <div class="t-dot"></div>
+            <div class="t-date">2025 — Present</div>
+            <div class="t-company">GDG on Campus · COMSATS University Abbottabad</div>
+            <h3>Marketing Lead &amp; Event Host</h3>
+            <ul class="t-list">
+              <li>Lead master of ceremonies for high-profile university tech events, developer panels, and open
+                workshops — confidently addressing student audiences numbering in the hundreds.</li>
+              <li>Conceptualize and execute multichannel digital branding campaigns and face-to-face marketing drives
+                across campus.</li>
+              <li>Cooperate with technical leads to plan, coordinate logistics, and launch developer sprints and student
+                hackathons.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="community-photos-container">
+          <div class="comm-card-new reveal right">
+            <div class="comm-img-frame">
+              <img src="assets/community/stage-1.jpeg" alt="Noor hosting at campus tech event" loading="lazy" />
+            </div>
+            <div class="comm-cap">Commanding the room with articulate tech leadership at campus developer events.</div>
+          </div>
+          <div class="comm-card-new reveal right">
+            <div class="comm-img-frame">
+              <img src="assets/community/stage-2.jpeg" alt="Speaking at tech panel" loading="lazy" />
+            </div>
+            <div class="comm-cap">Fostering collaboration and bridging the gap between software frameworks and student
+              developer ecosystems.</div>
+          </div>
+          <div class="comm-card-new reveal right">
+            <div class="comm-img-frame">
+              <img src="assets/community/stage-3.jpeg" alt="Hosting debating competition" loading="lazy" />
+            </div>
+            <div class="comm-cap">Architecting community impact and managing brand outreach from inception to execution.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══ CONTACT ══ -->
+    <section id="contact">
+      <div class="contact-inner">
+        <div class="section-eyebrow reveal" style="justify-content:center;">06 — Corporate Engagement Portal</div>
+        <h2 class="reveal">Let's accelerate your<br /><em>product delivery.</em></h2>
+        <p class="contact-sub reveal">Are you searching for an engineer who can architect secure, full-stack systems and
+          confidently articulate their business value? Initiate a formal correspondence below.</p>
+        <form class="contact-form reveal" id="contact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" placeholder="Your full name" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="your@email.com" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="message">Project Specifications</label>
+            <textarea id="message" name="message"
+              placeholder="Describe your project, timeline, and technical requirements..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-submit" id="submit-btn"><span>[ Dispatch Corporate Inquiry
+              ]</span></button>
+        </form>
+        <div id="contact-status-terminal" style="display:none;" class="status-terminal"></div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>© 2026 Noor-ul-Ain Shahzad. All Rights Reserved. Engineered utilizing modern, high-velocity AI software
+        development workflows.</p>
+      <div class="foot-links">
+        <a href="https://github.com/your-username" target="_blank">GitHub</a>
+        <a href="https://linkedin.com/in/your-username" target="_blank">LinkedIn</a>
+        <a href="mailto:noorulainshahzad25@gmail.com">Email</a>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module">
+    import createGlobe from '/lib/cobe.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.getElementById('cobe-globe');
+      if (!canvas) return;
+
+      // Drag interaction state
+      let pointerDown = null;
+      let dragOffset = { phi: 0, theta: 0 };
+      let phiOffset = 0;
+      let thetaOffset = 0;
+      let isPaused = false;
+      let phi = 0;
+      let globe = null;
+      let animationId = null;
+
+      // Pointer events for drag rotation
+      canvas.addEventListener('pointerdown', (e) => {
+        pointerDown = { x: e.clientX, y: e.clientY };
+        canvas.style.cursor = 'grabbing';
+        isPaused = true;
+        e.preventDefault();
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (pointerDown !== null) {
+          dragOffset = {
+            phi: (e.clientX - pointerDown.x) / 300,
+            theta: (e.clientY - pointerDown.y) / 1000,
+          };
+        }
+      }, { passive: true });
+
+      window.addEventListener('pointerup', () => {
+        if (pointerDown !== null) {
+          phiOffset += dragOffset.phi;
+          thetaOffset += dragOffset.theta;
+          dragOffset = { phi: 0, theta: 0 };
+        }
+        pointerDown = null;
+        canvas.style.cursor = 'grab';
+        isPaused = false;
+      });
+
+      // Marker data — tech locations matching the portfolio
+      const markers = [
+        { location: [33.77, 73.04], size: 0.04 },   // Abbottabad/Islamabad region (home)
+        { location: [37.78, -122.44], size: 0.03 },  // San Francisco (tech hub)
+        { location: [52.52, 13.41], size: 0.03 },    // Berlin
+        { location: [35.68, 139.65], size: 0.03 },   // Tokyo
+        { location: [1.35, 103.82], size: 0.03 },    // Singapore
+        { location: [51.51, -0.13], size: 0.03 },    // London
+        { location: [-33.87, 151.21], size: 0.03 },  // Sydney
+        { location: [25.2, 55.27], size: 0.03 },     // Dubai
+      ];
+
+      function initGlobe() {
+        const width = canvas.offsetWidth;
+        if (width === 0 || globe) return;
+
+        globe = createGlobe(canvas, {
+          devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+          width: width,
+          height: width,
+          phi: 0,
+          theta: 0.2,
+          dark: 0,
+          diffuse: 1.5,
+          mapSamples: 16000,
+          mapBrightness: 10,
+          baseColor: [0.93, 0.88, 0.82],
+          markerColor: [0.72, 0.56, 0.28],
+          glowColor: [0.94, 0.93, 0.91],
+          markerElevation: 0,
+          markers: markers,
+          opacity: 0.7,
+        });
+
+        function animate() {
+          if (!isPaused) phi += 0.003;
+          globe.update({
+            phi: phi + phiOffset + dragOffset.phi,
+            theta: 0.2 + thetaOffset + dragOffset.theta,
+          });
+          animationId = requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Fade in
+        setTimeout(() => {
+          canvas.style.opacity = '1';
+        }, 100);
+      }
+
+      // Initialize when canvas has size
+      if (canvas.offsetWidth > 0) {
+        initGlobe();
+      } else {
+        const ro = new ResizeObserver((entries) => {
+          if (entries[0]?.contentRect.width > 0) {
+            ro.disconnect();
+            initGlobe();
+          }
+        });
+        ro.observe(canvas);
+      }
+
+      // Handle resize
+      window.addEventListener('resize', () => {
+        if (globe) {
+          globe.destroy();
+          globe = null;
+          if (animationId) cancelAnimationFrame(animationId);
+          canvas.style.opacity = '0';
+          setTimeout(initGlobe, 100);
+        }
+      });
+    });
+  </script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>

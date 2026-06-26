@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NAS_CONSOLE // Admin Dashboard</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    body {
+      background: #050505;
+      color: #4ade80;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3rem;
+      cursor: default;
+    }
+
+    .admin-container {
+      max-width: 900px;
+      margin: 0 auto;
+      border: 1px solid #33ff33;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(74, 222, 128, 0.15);
+      background: #0a0a0a;
+      overflow: hidden;
+    }
+
+    .admin-header {
+      background: #111;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #33ff33;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-title {
+      font-weight: bold;
+      color: #d4af37;
+      letter-spacing: 0.1em;
+    }
+
+    .admin-content {
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #d4af37;
+      font-size: 0.9rem;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.8rem;
+      background: #111;
+      border: 1px solid #333;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      border-radius: 4px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #4ade80;
+    }
+
+    .btn-submit {
+      background: #d4af37;
+      color: #000;
+      border: none;
+      padding: 1rem 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+      background: #fff;
+    }
+
+    #status-msg {
+      margin-top: 1rem;
+      padding: 1rem;
+      display: none;
+      border-radius: 4px;
+    }
+
+    .success {
+      background: rgba(74, 222, 128, 0.2);
+      color: #4ade80;
+      border: 1px solid #4ade80;
+    }
+
+    .error {
+      background: rgba(255, 51, 51, 0.2);
+      color: #ff3333;
+      border: 1px solid #ff3333;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .nav-links a {
+      color: #d4af37;
+      text-decoration: none;
+      border: 1px solid #d4af37;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+    }
+
+    .nav-links a:hover {
+      background: #d4af37;
+      color: #000;
+    }
+
+    .project-list {
+      margin-top: 3rem;
+      border-top: 1px dashed #333;
+      padding-top: 2rem;
+    }
+
+    .project-item {
+      background: #111;
+      border: 1px solid #222;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-delete {
+      background: rgba(255, 51, 51, 0.1);
+      color: #ff3333;
+      border: 1px solid #ff3333;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-delete:hover {
+      background: #ff3333;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="admin-container">
+    <div class="admin-header">
+      <div class="admin-title">NAS_CONSOLE // PROJECT DEPLOYMENT</div>
+      <div style="font-size: 0.8rem;">STATUS: SECURE_LINK</div>
+    </div>
+
+    <div class="admin-content">
+      <h2>Upload New Project</h2>
+      <p style="color: #888; margin-bottom: 2rem; font-size: 0.9rem;">Submit a new project to the SQLite database. It
+        will automatically render on the portfolio.</p>
+
+      <form id="project-form">
+        <!-- SECRET PASSWORD -->
+        <div class="form-group">
+          <label>Admin Password</label>
+          <input type="password" id="p-password" placeholder="Enter admin passcode to authorize deploy (nas-admin-2026)"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label>Project Format Type</label>
+          <select id="p-type" required>
+            <option value="featured">Featured Project (Large card with Image)</option>
+            <option value="terminal">Terminal Card (Code snippet style)</option>
+            <option value="roadmap">Roadmap Strip (Small banner)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Project Title</label>
+          <input type="text" id="p-title" placeholder="e.g. Blackstone Chambers" required>
+        </div>
+
+        <div class="form-group">
+          <label>Role / Subtitle</label>
+          <input type="text" id="p-role" placeholder="e.g. Solo Full-Stack Developer">
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <input type="text" id="p-status" placeholder="e.g. Live Production">
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="p-description" rows="4" placeholder="Detailed project description..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Tech Tags (Comma separated)</label>
+          <input type="text" id="p-tags" placeholder="e.g. Node.js, SQLite, Security">
+        </div>
+
+        <div class="form-group">
+          <label>Live Link URL</label>
+          <input type="text" id="p-link" placeholder="e.g. https://blackstone.com">
+        </div>
+
+        <div class="form-group">
+          <label>Image Upload (For Featured Projects)</label>
+          <input type="file" id="p-image-file" accept="image/*">
+        </div>
+
+        <button type="submit" class="btn-submit">DEPLOY PROJECT</button>
+        <div id="status-msg"></div>
+      </form>
+
+      <div class="project-list">
+        <h2>Manage Deployed Projects</h2>
+        <div id="admin-projects-container">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <div class="nav-links">
+        <a href="/">&lt; Back to Portfolio</a>
+        <a href="/admin/inquiries">View Contact Inquiries Database &gt;</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('project-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusMsg = document.getElementById('status-msg');
+      statusMsg.style.display = 'block';
+      statusMsg.className = '';
+      statusMsg.textContent = 'Deploying...';
+
+      const formData = new FormData();
+      formData.append('password', document.getElementById('p-password').value);
+      formData.append('type', document.getElementById('p-type').value);
+      formData.append('title', document.getElementById('p-title').value);
+      formData.append('role', document.getElementById('p-role').value);
+      formData.append('status', document.getElementById('p-status').value);
+      formData.append('description', document.getElementById('p-description').value);
+      formData.append('tech_tags', document.getElementById('p-tags').value);
+      formData.append('link', document.getElementById('p-link').value);
+
+      const fileInput = document.getElementById('p-image-file');
+      if (fileInput.files.length > 0) {
+        formData.append('imageFile', fileInput.files[0]);
+      }
+
+      try {
+        const res = await fetch('/api/projects', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          statusMsg.className = 'success';
+          statusMsg.textContent = 'Project successfully deployed to database!';
+          document.getElementById('project-form').reset();
+        } else {
+          statusMsg.className = 'error';
+          statusMsg.textContent = 'Error: ' + data.error;
+        }
+      } catch (err) {
+        statusMsg.className = 'error';
+        statusMsg.textContent = 'Connection failed.';
+      }
+    });
+
+    async function loadAdminProjects() {
+      const container = document.getElementById('admin-projects-container');
+      container.innerHTML = 'Loading projects...';
+      try {
+        const res = await fetch('/api/projects');
+        const data = await res.json();
+
+        if (data.success) {
+          if (data.projects.length === 0) {
+            container.innerHTML = '<p style="color: #666;">No dynamic projects deployed yet.</p>';
+            return;
+          }
+
+          container.innerHTML = data.projects.map(p => `
+            <div class="project-item">
+              <div>
+                <strong style="color: #d4af37;">${p.title}</strong> <span style="color: #888;">(${p.type})</span>
+              </div>
+              <button class="btn-delete" onclick="deleteProject(${p.id})">DELETE</button>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        container.innerHTML = '<p style="color: #ff3333;">Failed to load projects.</p>';
+      }
+    }
+
+    async function deleteProject(id) {
+      const password = document.getElementById('p-password').value;
+      if (!password) {
+        alert('You must enter the Admin Password in the form above to delete a project!');
+        return;
+      }
+
+      if (!confirm('Are you sure you want to permanently delete this project?')) return;
+
+      try {
+        const res = await fetch('/api/projects/' + id, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('Project deleted successfully.');
+          loadAdminProjects(); // reload list
+        } else {
+          alert('Failed to delete: ' + data.error);
+        }
+      } catch (err) {
+        alert('Connection error.');
+      }
+    }
+
+    // Load projects when admin panel opens
+    document.addEventListener('DOMContentLoaded', loadAdminProjects);
+  </script>
+</body>
+
+</html>
