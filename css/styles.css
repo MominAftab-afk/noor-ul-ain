@@ -7,7 +7,7 @@
 }
 
 :root {
-  --bg: #ebdcd2;
+  --bg: #FFFFFF;
   --bg-panel: #f3e6dd;
   --bg-input: #fdfbf9;
   --text-main: #111111;
@@ -737,6 +737,14 @@ h2 {
   gap: 1.5rem;
 }
 
+@media (min-width: 769px) {
+  .skills-grid .skill-card:nth-child(3) {
+    grid-column: 1 / span 2;
+    justify-self: center;
+    width: calc(50% - 0.75rem);
+  }
+}
+
 .skill-card {
   background: var(--bg-panel);
   border: 1px solid var(--border);
@@ -764,6 +772,13 @@ h2 {
   text-transform: uppercase;
   margin-bottom: 1.5rem;
   color: var(--text-main);
+}
+
+.skill-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
 }
 
 .skill-tags {

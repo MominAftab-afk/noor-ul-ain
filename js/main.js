@@ -12,11 +12,11 @@ function initLoader() {
   if (!loader || !fill || !status) return;
 
   const bootLogs = [
-    'CONNECTING TO DATABASE...',
-    'establishing sqlite3 relational interface...',
-    'enabling write-ahead logging (wal_mode = true)...',
-    'mounting system directories...',
-    'verifying defensive cybersecurity protocols...',
+    'CONNECTING TO DATABASE STORAGE...',
+    'initializing mongodb & mysql connections...',
+    'mounting express.js API endpoints...',
+    'loading dynamic react application layers...',
+    'initializing antigravity agentic framework...',
     'NAS_CONSOLE CONNECTED. DEPLOYING...'
   ];
 
