@@ -526,7 +526,7 @@ async function loadDynamicProjects() {
     if (!data.success) return;
 
     if (data.projects.length === 0) {
-      container.innerHTML = '<p style="color: #666; font-family: var(--font-mono); text-align: center; padding: 2rem;">No projects deployed yet. Access the admin console to upload.</p>';
+      container.innerHTML = '';
       return;
     }
 
