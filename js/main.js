@@ -184,15 +184,16 @@ function initAboutScrollReveal() {
   revealWords();
 }
 
-// ── BLACKSTONE SLIDER ──────────────────────────────────────
-function initProjectSlider() {
-  const track = document.getElementById('bs-track');
-  const dotsContainer = document.getElementById('bs-dots');
-  const slides = document.querySelectorAll('#bs-track .pf-slide');
-  const btnPrev = document.getElementById('bs-prev');
-  const btnNext = document.getElementById('bs-next');
+// ── PROJECT SLIDERS ─────────────────────────────────────────
+function setupSlider(trackId, dotsId, prevId, nextId) {
+  const track = document.getElementById(trackId);
+  const dotsContainer = document.getElementById(dotsId);
+  if (!track || !dotsContainer) return;
+  const slides = track.querySelectorAll('.pf-slide');
+  const btnPrev = document.getElementById(prevId);
+  const btnNext = document.getElementById(nextId);
 
-  if (!track || !dotsContainer || slides.length === 0) return;
+  if (slides.length === 0) return;
 
   let currentSlide = 0;
   const totalSlides = slides.length;
@@ -218,21 +219,30 @@ function initProjectSlider() {
     });
   }
 
-  btnPrev.addEventListener('click', () => {
-    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-    updateSlider();
-  });
+  if (btnPrev) {
+    btnPrev.addEventListener('click', () => {
+      currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+      updateSlider();
+    });
+  }
 
-  btnNext.addEventListener('click', () => {
-    currentSlide = (currentSlide + 1) % totalSlides;
-    updateSlider();
-  });
+  if (btnNext) {
+    btnNext.addEventListener('click', () => {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      updateSlider();
+    });
+  }
 
   // Auto scroll
   setInterval(() => {
     currentSlide = (currentSlide + 1) % totalSlides;
     updateSlider();
   }, 5000);
+}
+
+function initProjectSlider() {
+  setupSlider('bs-track', 'bs-dots', 'bs-prev', 'bs-next');
+  setupSlider('dsa-track', 'dsa-dots', 'dsa-prev', 'dsa-next');
 }
 
 // ── RADIAL SKILL GLOW EFFECT ──────────────────────────────
