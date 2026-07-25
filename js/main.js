@@ -223,6 +223,7 @@ function setupSlider(trackId, dotsId, prevId, nextId) {
     btnPrev.addEventListener('click', () => {
       currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
       updateSlider();
+      startAutoScroll();
     });
   }
 
@@ -230,14 +231,97 @@ function setupSlider(trackId, dotsId, prevId, nextId) {
     btnNext.addEventListener('click', () => {
       currentSlide = (currentSlide + 1) % totalSlides;
       updateSlider();
+      startAutoScroll();
     });
   }
 
-  // Auto scroll
-  setInterval(() => {
-    currentSlide = (currentSlide + 1) % totalSlides;
+  // Touch & Pointer drag swipe interaction
+  let startX = 0;
+  let currentX = 0;
+  let isDragging = false;
+  let autoScrollInterval;
+
+  function startAutoScroll() {
+    stopAutoScroll();
+    autoScrollInterval = setInterval(() => {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      updateSlider();
+    }, 5000);
+  }
+
+  function stopAutoScroll() {
+    if (autoScrollInterval) {
+      clearInterval(autoScrollInterval);
+    }
+  }
+
+  // Start with auto-scroll
+  startAutoScroll();
+
+  const handleDragStart = (clientX) => {
+    startX = clientX;
+    currentX = clientX;
+    isDragging = true;
+    track.style.transition = 'none'; // remove transition during drag
+    stopAutoScroll();
+  };
+
+  const handleDragMove = (clientX) => {
+    if (!isDragging) return;
+    currentX = clientX;
+    const diffX = currentX - startX;
+    const baseTranslate = -currentSlide * track.offsetWidth;
+    const totalTranslate = baseTranslate + diffX;
+    track.style.transform = `translateX(${totalTranslate}px)`;
+  };
+
+  const handleDragEnd = () => {
+    if (!isDragging) return;
+    isDragging = false;
+    track.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+    const diffX = currentX - startX;
+    const threshold = track.offsetWidth / 5; // 20% drag threshold
+
+    if (diffX < -threshold && currentSlide < totalSlides - 1) {
+      currentSlide++;
+    } else if (diffX > threshold && currentSlide > 0) {
+      currentSlide--;
+    }
     updateSlider();
-  }, 5000);
+    startAutoScroll();
+  };
+
+  // Touch event listeners
+  track.addEventListener('touchstart', (e) => {
+    handleDragStart(e.touches[0].clientX);
+  }, { passive: true });
+
+  track.addEventListener('touchmove', (e) => {
+    handleDragMove(e.touches[0].clientX);
+  }, { passive: true });
+
+  track.addEventListener('touchend', () => {
+    handleDragEnd();
+  }, { passive: true });
+
+  // Pointer event listeners for desktop drag
+  track.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    track.setPointerCapture(e.pointerId);
+    handleDragStart(e.clientX);
+  });
+
+  track.addEventListener('pointermove', (e) => {
+    handleDragMove(e.clientX);
+  });
+
+  track.addEventListener('pointerup', () => {
+    handleDragEnd();
+  });
+
+  track.addEventListener('pointercancel', () => {
+    handleDragEnd();
+  });
 }
 
 function initProjectSlider() {
@@ -262,6 +346,7 @@ function initSkillGlow() {
 }
 
 // ── GALEKTO SCRAMBLED DECRYPT EFFECT ──────────────────────
+// ── GALEKTO SCRAMBLED DECRYPT EFFECT ──────────────────────
 class TextScrambler {
   constructor(el) {
     this.el = el;
@@ -269,18 +354,38 @@ class TextScrambler {
     this.update = this.update.bind(this);
   }
 
-  setText(newText) {
-    const oldText = this.el.innerText;
-    const length = Math.max(oldText.length, newText.length);
+  setText(newHTML) {
     const promise = new Promise((resolve) => this.resolve = resolve);
+    this.parts = newHTML.split(/(<\/?[^>]+>)/);
     this.queue = [];
-    for (let i = 0; i < length; i++) {
-      const from = oldText[i] || '';
-      const to = newText[i] || '';
+    
+    // Calculate total text characters
+    let totalTextChars = 0;
+    this.parts.forEach(part => {
+      if (part && !part.startsWith('<')) {
+        totalTextChars += part.length;
+      }
+    });
+
+    // Build the character queue
+    for (let i = 0; i < totalTextChars; i++) {
       const start = Math.floor(Math.random() * 20);
       const end = start + Math.floor(Math.random() * 20);
-      this.queue.push({ from, to, start, end, char: '' });
+      this.queue.push({ from: '', to: '', start, end, char: '' });
     }
+
+    // Populate queue targets and initials
+    let charIndex = 0;
+    this.parts.forEach(part => {
+      if (part && !part.startsWith('<')) {
+        for (let j = 0; j < part.length; j++) {
+          this.queue[charIndex].to = part[j];
+          this.queue[charIndex].from = part[j];
+          charIndex++;
+        }
+      }
+    });
+
     cancelAnimationFrame(this.frameRequest);
     this.frame = 0;
     this.update();
@@ -290,22 +395,36 @@ class TextScrambler {
   update() {
     let output = '';
     let complete = 0;
-    for (let i = 0, n = this.queue.length; i < n; i++) {
-      let { from, to, start, end, char } = this.queue[i];
-      if (this.frame >= end) {
-        complete++;
-        output += to;
-      } else if (this.frame >= start) {
-        if (!char || Math.random() < 0.28) {
-          char = this.randomChar();
-          this.queue[i].char = char;
-        }
-        output += `<span style="color: var(--gold); text-shadow: 0 0 4px var(--gold-glow);">${char}</span>`;
+    let charIndex = 0;
+
+    for (let i = 0; i < this.parts.length; i++) {
+      const part = this.parts[i];
+      if (!part) continue;
+
+      if (part.startsWith('<')) {
+        output += part;
       } else {
-        output += from;
+        for (let j = 0; j < part.length; j++) {
+          let { from, to, start, end, char } = this.queue[charIndex];
+          if (this.frame >= end) {
+            complete++;
+            output += to;
+          } else if (this.frame >= start) {
+            if (!char || Math.random() < 0.28) {
+              char = this.randomChar();
+              this.queue[charIndex].char = char;
+            }
+            output += `<span style="color: var(--gold); text-shadow: 0 0 4px var(--gold-glow);">${char}</span>`;
+          } else {
+            output += from;
+          }
+          charIndex++;
+        }
       }
     }
+
     this.el.innerHTML = output;
+
     if (complete === this.queue.length) {
       this.resolve();
     } else {
@@ -329,9 +448,9 @@ function initScrollReveal() {
 
         // If it is a section title, trigger Galekto decrypt sequence!
         if (entry.target.tagName.toLowerCase() === 'h2') {
-          const originalText = entry.target.innerText;
+          const originalHTML = entry.target.innerHTML;
           const scrambler = new TextScrambler(entry.target);
-          scrambler.setText(originalText);
+          scrambler.setText(originalHTML);
         }
 
         observer.unobserve(entry.target);

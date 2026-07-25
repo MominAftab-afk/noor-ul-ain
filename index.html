@@ -644,15 +644,22 @@
         ro.observe(canvas);
       }
 
-      // Handle resize
+      // Handle resize with debouncing to prevent concurrent re-renders
+      let resizeTimeout;
       window.addEventListener('resize', () => {
-        if (globe) {
-          globe.destroy();
-          globe = null;
-          if (animationId) cancelAnimationFrame(animationId);
-          canvas.style.opacity = '0';
-          setTimeout(initGlobe, 100);
-        }
+        canvas.style.opacity = '0';
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          if (globe) {
+            globe.destroy();
+            globe = null;
+          }
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+          }
+          initGlobe();
+        }, 250);
       });
     });
   </script>
