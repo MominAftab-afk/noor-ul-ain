@@ -241,6 +241,7 @@ function setupSlider(trackId, dotsId, prevId, nextId) {
 }
 
 function initProjectSlider() {
+  setupSlider('bb-track', 'bb-dots', 'bb-prev', 'bb-next');
   setupSlider('bs-track', 'bs-dots', 'bs-prev', 'bs-next');
   setupSlider('dsa-track', 'dsa-dots', 'dsa-prev', 'dsa-next');
 }
@@ -532,7 +533,7 @@ async function loadDynamicProjects() {
 
     container.innerHTML = '';
     let terminalCardsHTML = '';
-    
+
     data.projects.forEach(proj => {
       if (proj.type === 'featured') {
         const techList = proj.tech_tags.map(t => `<li><strong>•</strong> ${t}</li>`).join('');
