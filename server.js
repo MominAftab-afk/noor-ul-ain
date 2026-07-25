@@ -1,12 +1,18 @@
 const express = require('express');
 const path = require('path');
 const Database = require('better-sqlite3');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Initialize SQLite database
-const db = new Database(path.join(__dirname, 'inquiries.db'));
+const dbPath = process.env.DATABASE_PATH || path.join(__dirname, 'inquiries.db');
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+const db = new Database(dbPath);
 
 // Create inquiries table if it doesn't exist
 db.prepare(`
@@ -81,10 +87,19 @@ app.post('/api/inquiry', (req, res) => {
 
 const multer = require('multer');
 
+// Configure upload path (supporting persistent storage volumes)
+const uploadDir = process.env.UPLOAD_PATH || path.join(__dirname, 'assets', 'projects');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Serve uploaded files dynamically from the custom UPLOAD_PATH route
+app.use('/assets/projects', express.static(uploadDir));
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, 'assets', 'projects'))
+    cb(null, uploadDir)
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
