@@ -47,13 +47,14 @@ db.pragma('journal_mode = WAL');
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname));
 
 // Serve cobe module for browser ESM import
 app.get('/lib/cobe.js', (req, res) => {
   res.type('application/javascript');
-  res.sendFile(path.join(__dirname, 'node_modules', 'cobe', 'dist', 'index.esm.js'));
+  res.sendFile('node_modules/cobe/dist/index.esm.js', { root: __dirname });
 });
+
+app.use(express.static(__dirname));
 
 // POST contact inquiry
 app.post('/api/inquiry', (req, res) => {
@@ -338,7 +339,11 @@ app.get('/admin/inquiries', (req, res) => {
                 </tbody>
               </table>
             `}
-            <a href="/" class="btn-back">&lt; Exit Console &gt;</a>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+              <a href="/admin" class="btn-back">&lt; Project Upload Console</a>
+              <a href="/" class="btn-back" style="background: transparent; color: #d4af37;">&lt; Back to Portfolio &gt;</a>
+            </div>
           </div>
         </div>
       </body>
@@ -351,9 +356,9 @@ app.get('/admin/inquiries', (req, res) => {
   }
 });
 
-// GET Secret Admin Dashboard for managing projects
-app.get('/admin/nas-console-secret', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
+// GET Admin Dashboard for managing projects
+app.get(['/admin', '/admin/projects', '/admin/nas-console-secret'], (req, res) => {
+  res.sendFile('admin.html', { root: __dirname });
 });
 
 // Start Server
