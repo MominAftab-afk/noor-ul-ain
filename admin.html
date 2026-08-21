@@ -279,6 +279,7 @@
           statusMsg.className = 'success';
           statusMsg.textContent = 'Project successfully deployed to database!';
           document.getElementById('project-form').reset();
+          loadAdminProjects();
         } else {
           statusMsg.className = 'error';
           statusMsg.textContent = 'Error: ' + data.error;
