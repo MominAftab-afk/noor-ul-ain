@@ -7,10 +7,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Initialize SQLite database
-const dbPath = process.env.DATABASE_PATH || path.join(__dirname, 'inquiries.db');
-const dbDir = path.dirname(dbPath);
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
+let dbPath = process.env.DATABASE_PATH || path.join(__dirname, 'inquiries.db');
+try {
+  const dbDir = path.dirname(dbPath);
+  if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+  }
+} catch (err) {
+  console.warn(`[WARN] Could not create database directory at ${dbPath}, falling back to local workspace.`);
+  dbPath = path.join(__dirname, 'inquiries.db');
 }
 const db = new Database(dbPath);
 
@@ -89,9 +94,17 @@ app.post('/api/inquiry', (req, res) => {
 const multer = require('multer');
 
 // Configure upload path (supporting persistent storage volumes)
-const uploadDir = process.env.UPLOAD_PATH || path.join(__dirname, 'assets', 'projects');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+let uploadDir = process.env.UPLOAD_PATH || path.join(__dirname, 'assets', 'projects');
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (err) {
+  console.warn(`[WARN] Could not create upload directory at ${uploadDir}, falling back to local workspace.`);
+  uploadDir = path.join(__dirname, 'assets', 'projects');
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
 }
 
 // Serve uploaded files dynamically from the custom UPLOAD_PATH route
