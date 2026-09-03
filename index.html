@@ -690,10 +690,8 @@
         const width = canvas.offsetWidth;
         if (width === 0 || globe) return;
 
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
         globe = createGlobe(canvas, {
-          devicePixelRatio: dpr,
+          devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
           width: width,
           height: width,
           phi: 0,
@@ -708,12 +706,17 @@
           markerElevation: 0,
           markers: markers,
           opacity: 0.7,
-          onRender: (state) => {
-            if (!isPaused) phi += 0.003;
-            state.phi = phi + phiOffset + dragOffset.phi;
-            state.theta = 0.2 + thetaOffset + dragOffset.theta;
-          }
         });
+
+        function animate() {
+          if (!isPaused) phi += 0.003;
+          globe.update({
+            phi: phi + phiOffset + dragOffset.phi,
+            theta: 0.2 + thetaOffset + dragOffset.theta,
+          });
+          animationId = requestAnimationFrame(animate);
+        }
+        animate();
 
         // Fade in
         setTimeout(() => {
@@ -743,6 +746,10 @@
           if (globe) {
             globe.destroy();
             globe = null;
+          }
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
           }
           initGlobe();
         }, 250);
