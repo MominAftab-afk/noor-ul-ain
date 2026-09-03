@@ -8,7 +8,7 @@
 // Points to the Render backend. Leave empty ('') for local development.
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? ''  // local dev — same origin
-  : 'https://YOUR_RENDER_URL.onrender.com';  // ← Replace with your actual Render URL after deploying
+  : 'https://noor-ul-ain.onrender.com';  // Render backend URL
 
 // ── LOADER / BOOT SEQUENCE ────────────────────────────────
 function initLoader() {
