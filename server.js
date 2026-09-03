@@ -1,57 +1,48 @@
 const express = require('express');
 const path = require('path');
-const Database = require('better-sqlite3');
-const fs = require('fs');
+const { createClient } = require('@libsql/client');
+const cors = require('cors');
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Initialize SQLite database
-let dbPath = process.env.DATABASE_PATH || path.join(__dirname, 'inquiries.db');
-try {
-  const dbDir = path.dirname(dbPath);
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-  }
-} catch (err) {
-  console.warn(`[WARN] Could not create database directory at ${dbPath}, falling back to local workspace.`);
-  dbPath = path.join(__dirname, 'inquiries.db');
-}
-const db = new Database(dbPath);
+// ── CORS ─────────────────────────────────────────────────────
+// Allow frontend on Vercel (and localhost for development)
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+app.use(cors({
+  origin: [FRONTEND_URL, 'http://localhost:3000', 'http://localhost:5500', 'http://127.0.0.1:5500'],
+  methods: ['GET', 'POST', 'DELETE'],
+  credentials: true,
+}));
 
-// Create inquiries table if it doesn't exist
-db.prepare(`
-  CREATE TABLE IF NOT EXISTS inquiries (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    message TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`).run();
+// ── TURSO DATABASE ───────────────────────────────────────────
+// Cloud-hosted SQLite via Turso (free tier: 500 DBs, 9GB storage)
+const db = createClient({
+  url: process.env.TURSO_DATABASE_URL || 'file:local.db',
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
 
-// Create projects table if it doesn't exist
-db.prepare(`
-  CREATE TABLE IF NOT EXISTS projects (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    type TEXT NOT NULL,
-    title TEXT NOT NULL,
-    role TEXT,
-    status TEXT,
-    description TEXT,
-    link TEXT,
-    tech_tags TEXT,
-    image_url TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`).run();
+// ── CLOUDINARY ───────────────────────────────────────────────
+// Cloud image hosting (free tier: 25GB storage, 25GB bandwidth)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-// Enable WAL mode for performance
-db.pragma('journal_mode = WAL');
+// ── ADMIN PASSWORD ───────────────────────────────────────────
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'nas-admin-2026';
 
-// Middleware
+// ── MULTER (MEMORY STORAGE) ─────────────────────────────────
+// Files are buffered in memory, then uploaded to Cloudinary
+const upload = multer({ storage: multer.memoryStorage() });
+
+// ── MIDDLEWARE ────────────────────────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
 
 // Serve cobe module for browser ESM import
 app.get('/lib/cobe.js', (req, res) => {
@@ -59,31 +50,79 @@ app.get('/lib/cobe.js', (req, res) => {
   res.sendFile('node_modules/cobe/dist/index.esm.js', { root: __dirname });
 });
 
-app.use(express.static(__dirname));
+// ── DATABASE INITIALIZATION ──────────────────────────────────
+async function initDatabase() {
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS inquiries (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      message TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
 
-// POST contact inquiry
-app.post('/api/inquiry', (req, res) => {
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS projects (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      title TEXT NOT NULL,
+      role TEXT,
+      status TEXT,
+      description TEXT,
+      link TEXT,
+      tech_tags TEXT,
+      image_url TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  console.log('[DB] Turso tables initialized.');
+}
+
+// ── HELPER: Upload buffer to Cloudinary ──────────────────────
+function uploadToCloudinary(fileBuffer, originalName) {
+  return new Promise((resolve, reject) => {
+    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: 'portfolio-projects',
+        public_id: uniqueName,
+        resource_type: 'image',
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+    stream.end(fileBuffer);
+  });
+}
+
+// ── API: POST Contact Inquiry ────────────────────────────────
+app.post('/api/inquiry', async (req, res) => {
   const { name, email, message } = req.body;
 
-  // Simple input validation
   if (!name || !email || !message) {
     return res.status(400).json({ success: false, error: 'All fields are required.' });
   }
 
-  // Basic HTML sanitization to prevent XSS (Defensive Coding)
+  // Basic HTML sanitization to prevent XSS
   const sanitize = (str) => str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const cleanName = sanitize(name.trim());
   const cleanEmail = sanitize(email.trim());
   const cleanMessage = sanitize(message.trim());
 
   try {
-    const insert = db.prepare('INSERT INTO inquiries (name, email, message) VALUES (?, ?, ?)');
-    const result = insert.run(cleanName, cleanEmail, cleanMessage);
+    const result = await db.execute({
+      sql: 'INSERT INTO inquiries (name, email, message) VALUES (?, ?, ?)',
+      args: [cleanName, cleanEmail, cleanMessage],
+    });
 
     res.json({
       success: true,
       message: 'Inquiry saved to database.',
-      id: result.lastInsertRowid
+      id: Number(result.lastInsertRowid),
     });
   } catch (error) {
     console.error('Database error:', error);
@@ -91,45 +130,13 @@ app.post('/api/inquiry', (req, res) => {
   }
 });
 
-const multer = require('multer');
-
-// Configure upload path (supporting persistent storage volumes)
-let uploadDir = process.env.UPLOAD_PATH || path.join(__dirname, 'assets', 'projects');
-try {
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
-} catch (err) {
-  console.warn(`[WARN] Could not create upload directory at ${uploadDir}, falling back to local workspace.`);
-  uploadDir = path.join(__dirname, 'assets', 'projects');
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
-}
-
-// Serve uploaded files dynamically from the custom UPLOAD_PATH route
-app.use('/assets/projects', express.static(uploadDir));
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir)
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, uniqueSuffix + '-' + file.originalname)
-  }
-});
-const upload = multer({ storage: storage });
-
-// API: Get all projects
-app.get('/api/projects', (req, res) => {
+// ── API: GET All Projects ────────────────────────────────────
+app.get('/api/projects', async (req, res) => {
   try {
-    const projects = db.prepare('SELECT * FROM projects ORDER BY created_at ASC').all();
-    // Parse JSON arrays stored in tech_tags
-    const parsedProjects = projects.map(p => ({
+    const result = await db.execute('SELECT * FROM projects ORDER BY created_at ASC');
+    const parsedProjects = result.rows.map(p => ({
       ...p,
-      tech_tags: p.tech_tags ? JSON.parse(p.tech_tags) : []
+      tech_tags: p.tech_tags ? JSON.parse(p.tech_tags) : [],
     }));
     res.json({ success: true, projects: parsedProjects });
   } catch (error) {
@@ -138,17 +145,13 @@ app.get('/api/projects', (req, res) => {
   }
 });
 
-// API: Add a new project (Simple password protection)
-app.post('/api/projects', upload.single('imageFile'), (req, res) => {
+// ── API: POST Add New Project ────────────────────────────────
+app.post('/api/projects', upload.single('imageFile'), async (req, res) => {
   const { password, type, title, role, status, description, link, tech_tags } = req.body;
   let image_url = '';
 
-  if (req.file) {
-    image_url = 'assets/projects/' + req.file.filename;
-  }
-
-  // Extremely simple auth for demo
-  if (password !== 'nas-admin-2026') {
+  // Auth check
+  if (password !== ADMIN_PASSWORD) {
     return res.status(401).json({ success: false, error: 'Unauthorized. Invalid password.' });
   }
 
@@ -157,35 +160,43 @@ app.post('/api/projects', upload.single('imageFile'), (req, res) => {
   }
 
   try {
+    // Upload image to Cloudinary if provided
+    if (req.file) {
+      const cloudResult = await uploadToCloudinary(req.file.buffer, req.file.originalname);
+      image_url = cloudResult.secure_url;
+    }
+
     const tagsJson = tech_tags ? JSON.stringify(tech_tags.split(',').map(t => t.trim())) : '[]';
-    
-    const insert = db.prepare(`
-      INSERT INTO projects (type, title, role, status, description, link, tech_tags, image_url)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-    
-    const result = insert.run(type, title, role || '', status || '', description || '', link || '', tagsJson, image_url);
-    res.json({ success: true, message: 'Project added successfully!', id: result.lastInsertRowid });
+
+    const result = await db.execute({
+      sql: `INSERT INTO projects (type, title, role, status, description, link, tech_tags, image_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [type, title, role || '', status || '', description || '', link || '', tagsJson, image_url],
+    });
+
+    res.json({ success: true, message: 'Project added successfully!', id: Number(result.lastInsertRowid) });
   } catch (error) {
     console.error('Error inserting project:', error);
     res.status(500).json({ success: false, error: 'Failed to add project.' });
   }
 });
 
-// API: Delete a project
-app.delete('/api/projects/:id', (req, res) => {
+// ── API: DELETE Project ──────────────────────────────────────
+app.delete('/api/projects/:id', async (req, res) => {
   const { password } = req.body;
   const { id } = req.params;
 
-  if (password !== 'nas-admin-2026') {
+  if (password !== ADMIN_PASSWORD) {
     return res.status(401).json({ success: false, error: 'Unauthorized. Invalid password.' });
   }
 
   try {
-    const del = db.prepare('DELETE FROM projects WHERE id = ?');
-    const result = del.run(id);
+    const result = await db.execute({
+      sql: 'DELETE FROM projects WHERE id = ?',
+      args: [id],
+    });
 
-    if (result.changes > 0) {
+    if (result.rowsAffected > 0) {
       res.json({ success: true, message: 'Project deleted successfully!' });
     } else {
       res.status(404).json({ success: false, error: 'Project not found.' });
@@ -196,10 +207,11 @@ app.delete('/api/projects/:id', (req, res) => {
   }
 });
 
-// GET Admin dashboard to view inquiries
-app.get('/admin/inquiries', (req, res) => {
+// ── ADMIN: Inquiries Dashboard ───────────────────────────────
+app.get('/admin/inquiries', async (req, res) => {
   try {
-    const inquiries = db.prepare('SELECT * FROM inquiries ORDER BY created_at DESC').all();
+    const result = await db.execute('SELECT * FROM inquiries ORDER BY created_at DESC');
+    const inquiries = result.rows;
 
     // Render a high-fidelity retro terminal dashboard directly
     const html = `
@@ -317,12 +329,12 @@ app.get('/admin/inquiries', (req, res) => {
             <div class="admin-title">SYSTEM_CONSOLE // inquiries.db</div>
             <div class="admin-status">
               <span class="status-dot"></span>
-              SECURE_DB_CONNECTED (WAL_MODE)
+              TURSO_DB_CONNECTED (CLOUD_MODE)
             </div>
           </div>
           <div class="admin-content">
             <h2>Recorded Contact Submissions</h2>
-            <p>Database: sqlite3 // Table: inquiries // Storage: local disk</p>
+            <p>Database: Turso (libsql) // Table: inquiries // Storage: Cloud</p>
 
             ${inquiries.length === 0 ? `
               <div class="no-records">
@@ -369,17 +381,23 @@ app.get('/admin/inquiries', (req, res) => {
   }
 });
 
-// GET Admin Dashboard for managing projects
+// ── ADMIN: Project Management Dashboard ──────────────────────
 app.get(['/admin', '/admin/projects', '/admin/nas-console-secret'], (req, res) => {
   res.sendFile('admin.html', { root: __dirname });
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`\n==================================================`);
-  console.log(` NAS PORTFOLIO SERVER IS ONLINE`);
-  console.log(` URL: http://localhost:${PORT}`);
-  console.log(` Database: queries are logged to inquiries.db`);
-  console.log(` Dashboard: http://localhost:${PORT}/admin/inquiries`);
-  console.log(`==================================================\n`);
+// ── START SERVER ─────────────────────────────────────────────
+initDatabase().then(() => {
+  app.listen(PORT, () => {
+    console.log(`\n==================================================`);
+    console.log(` NAS PORTFOLIO SERVER IS ONLINE`);
+    console.log(` URL: http://localhost:${PORT}`);
+    console.log(` Database: Turso Cloud SQLite`);
+    console.log(` Images: Cloudinary CDN`);
+    console.log(` Dashboard: http://localhost:${PORT}/admin/inquiries`);
+    console.log(`==================================================\n`);
+  });
+}).catch(err => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
 });

@@ -4,6 +4,12 @@
    Noor-ul-Ain Shahzad — Portfolio JavaScript (Galekto Aesthetic)
    ═══════════════════════════════════════════════════════════ */
 
+// ── API BASE URL ──────────────────────────────────────────
+// Points to the Render backend. Leave empty ('') for local development.
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? ''  // local dev — same origin
+  : 'https://YOUR_RENDER_URL.onrender.com';  // ← Replace with your actual Render URL after deploying
+
 // ── LOADER / BOOT SEQUENCE ────────────────────────────────
 function initLoader() {
   const loader = document.getElementById('loader');
@@ -581,7 +587,7 @@ function initContactForm() {
     }
 
     try {
-      const response = await fetch('/api/inquiry', {
+      const response = await fetch(API_BASE + '/api/inquiry', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -641,7 +647,7 @@ async function loadDynamicProjects() {
   if (!container) return;
 
   try {
-    const res = await fetch('/api/projects');
+    const res = await fetch(API_BASE + '/api/projects');
     const data = await res.json();
     if (!data.success) return;
 

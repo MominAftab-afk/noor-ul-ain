@@ -13,8 +13,10 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "better-sqlite3": "^12.11.1",
+    "@libsql/client": "^0.14.0",
+    "cloudinary": "^2.6.1",
     "cobe": "^2.0.1",
+    "cors": "^2.8.5",
     "express": "^5.2.1",
     "multer": "^2.2.0"
   }
